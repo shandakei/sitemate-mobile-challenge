@@ -14,22 +14,35 @@ export default function App() {
   const [ searchQuery, setSearchQuery ] = useState("")
 
   useEffect(() => {
-    fetch(externalAPI)
-    .then(res => res.json())
-    .then(res => setData(res.results || []))
-    .catch(err => console.log(err))
+    const fetchPokemonList = async () => {
+      try {
+        const res = await fetch(externalAPI);
+        const data = await res.json();
+        setData(data.results || []); 
+      } catch (err) {
+        console.error("Error for fetchPokemonList:", err);
+        alert("Failed to load Pokémon list. Please try again later.");
+      }
+    };
+  
+    fetchPokemonList();
   }, []);
-
-  const filteredData = data.filter( pokemon => 
+  
+  const filteredData = data.filter(pokemon =>
     pokemon.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
-
-  const fetchPokemonDetails = (name) => {
-    fetch(`https://pokeapi.co/api/v2/pokemon/${name}/`)
-    .then(res => res.json())
-    .then(data => setSelectedPokemon(data))
-    .catch(err => console.log(err))
+  
+  const fetchPokemonDetails = async (name) => {
+    try {
+      const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${name}/`);
+      const data = await res.json();
+      setSelectedPokemon(data); 
+    } catch (err) {
+      console.error(`Error for fetchPokemonDetails: ${name}:`, err);
+      alert(`Failed to load details for ${name}. Please try again.`);
+    }
   };
+  
   
   
   return (
@@ -115,7 +128,7 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
-    backgroundColor: '#fff',
+    backgroundColor: 'goldenrod',
     alignItems: 'center',
     justifyContent: 'flex-start',
   },
@@ -142,6 +155,7 @@ const styles = StyleSheet.create({
     border: '3px solid black',
     textAlign: 'center',
     textAlignVertical: 'center',
+    backgroundColor: 'white',
     color: 'grey',
     marginBottom: 10,
     marginTop: 50
